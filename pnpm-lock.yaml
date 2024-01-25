@@ -3751,6 +3751,9 @@ importers:
       astro:
         specifier: workspace:*
         version: link:../../..
+      htmx.org:
+        specifier: 1.9.10
+        version: 1.9.10
 
   packages/astro/test/fixtures/without-site-config:
     dependencies:
@@ -10753,6 +10756,10 @@ packages:
       domhandler: 5.0.3
       domutils: 3.1.0
       entities: 4.5.0
+
+  /htmx.org@1.9.10:
+    resolution: {integrity: sha512-UgchasltTCrTuU2DQLom3ohHrBvwr7OqpwyAVJ9VxtNBng4XKkVsqrv0Qr3srqvM9ZNI3f1MmvVQQqK7KW/bTA==}
+    dev: false
 
   /http-cache-semantics@4.1.1:
     resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}

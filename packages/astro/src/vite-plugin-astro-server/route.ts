@@ -35,6 +35,7 @@ import { preload } from './index.js';
 import { getComponentMetadata } from './metadata.js';
 import { handle404Response, writeSSRResult, writeWebResponse } from './response.js';
 import { getScriptsForURL } from './scripts.js';
+import { joinPaths } from '../core/path.js';
 
 const clientLocalsSymbol = Symbol.for('astro.locals');
 
@@ -393,12 +394,12 @@ async function getScriptsAndStyles({ pipeline, filePath }: GetScriptsAndStylesPa
 	const settings = pipeline.getSettings();
 	const mode = pipeline.getEnvironment().mode;
 	// Add hoisted script tags
-	const scripts = await getScriptsForURL(filePath, settings.config.root, moduleLoader);
+	const scripts = await getScriptsForURL(filePath, settings.config.root, moduleLoader, settings.config.base);
 
 	// Inject HMR scripts
 	if (isPage(filePath, settings) && mode === 'development') {
 		scripts.add({
-			props: { type: 'module', src: '/@vite/client' },
+			props: { type: 'module', src: joinPaths(settings.config.base, '/@vite/client') },
 			children: '',
 		});
 
@@ -409,7 +410,7 @@ async function getScriptsAndStyles({ pipeline, filePath }: GetScriptsAndStylesPa
 			scripts.add({
 				props: {
 					type: 'module',
-					src: await resolveIdToUrl(moduleLoader, 'astro/runtime/client/dev-toolbar/entrypoint.js'),
+					src: await resolveIdToUrl(moduleLoader, 'astro/runtime/client/dev-toolbar/entrypoint.js', settings.config.base),
 				},
 				children: '',
 			});
@@ -437,7 +438,7 @@ async function getScriptsAndStyles({ pipeline, filePath }: GetScriptsAndStylesPa
 			});
 		} else if (script.stage === 'page' && isPage(filePath, settings)) {
 			scripts.add({
-				props: { type: 'module', src: `/@id/${PAGE_SCRIPT_ID}` },
+				props: { type: 'module', src: joinPaths(settings.config.base, `/@id/${PAGE_SCRIPT_ID}`) },
 				children: '',
 			});
 		}
@@ -462,7 +463,7 @@ async function getScriptsAndStyles({ pipeline, filePath }: GetScriptsAndStylesPa
 		scripts.add({
 			props: {
 				type: 'module',
-				src: url,
+				src: joinPaths(settings.config.base, url),
 			},
 			children: '',
 		});

@@ -63,7 +63,10 @@ describe('Development Routing', () => {
 		});
 
 		it('200 when loading /', async () => {
+		// it.only('200 when loading /', async () => {
 			const response = await fixture.fetch('/');
+      const text = await response.text();
+      console.log("text", text);
 			expect(response.status).to.equal(200);
 		});
 
@@ -158,8 +161,18 @@ describe('Development Routing', () => {
 			expect(response.status).to.equal(404);
 		});
 
+		it('200 for @vite/client', async () => {
+			const response = await fixture.fetch('/blog/@vite/client');
+      const text = await response.text();
+      // console.log("text", text);
+			expect(response.status).to.equal(200);
+		});
+
 		it('200 when loading subpath root with trailing slash', async () => {
+		// it.only('200 when loading subpath root with trailing slash', async () => {
 			const response = await fixture.fetch('/blog/');
+      const text = await response.text();
+      console.log("text", text);
 			expect(response.status).to.equal(200);
 		});
 
