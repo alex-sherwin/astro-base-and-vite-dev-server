@@ -6,7 +6,7 @@ import type { AstroConfig, AstroSettings, RouteType } from '../@types/astro.js';
 import { isServerLikeOutput } from '../prerender/utils.js';
 import { SUPPORTED_MARKDOWN_FILE_EXTENSIONS } from './constants.js';
 import type { ModuleLoader } from './module-loader/index.js';
-import { prependForwardSlash, removeTrailingForwardSlash, slash } from './path.js';
+import { joinPaths, prependForwardSlash, removeTrailingForwardSlash, slash } from './path.js';
 
 /** Returns true if argument is an object of any prototype/class (but not null). */
 export function isObject(value: unknown): value is Record<string, any> {
@@ -189,25 +189,25 @@ export function emoji(char: string, fallback: string) {
  * through a script tag or a dynamic import as-is.
  */
 // NOTE: `/@id/` should only be used when the id is fully resolved
-export async function resolveIdToUrl(loader: ModuleLoader, id: string, root?: URL) {
+export async function resolveIdToUrl(loader: ModuleLoader, id: string, base: string | undefined, root?: URL) {
 	let resultId = await loader.resolveId(id, undefined);
 	// Try resolve jsx to tsx
 	if (!resultId && id.endsWith('.jsx')) {
 		resultId = await loader.resolveId(id.slice(0, -4), undefined);
 	}
 	if (!resultId) {
-		return VALID_ID_PREFIX + id;
+		return joinPaths(base, VALID_ID_PREFIX + id);
 	}
 	if (path.isAbsolute(resultId)) {
 		const normalizedRoot = root && normalizePath(fileURLToPath(root));
 		// Convert to root-relative path if path is inside root
 		if (normalizedRoot && resultId.startsWith(normalizedRoot)) {
-			return resultId.slice(normalizedRoot.length - 1);
+			return joinPaths(base, resultId.slice(normalizedRoot.length - 1));
 		} else {
-			return '/@fs' + prependForwardSlash(resultId);
+			return joinPaths(base, '/@fs' + prependForwardSlash(resultId));
 		}
 	}
-	return VALID_ID_PREFIX + resultId;
+	return joinPaths(base, VALID_ID_PREFIX + resultId);
 }
 
 export function resolveJsToTs(filePath: string) {

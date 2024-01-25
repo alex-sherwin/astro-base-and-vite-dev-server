@@ -79,7 +79,7 @@ export default class DevPipeline extends Pipeline {
 			renderers: [],
 			clientDirectives: manifest.clientDirectives,
 			compressHTML: manifest.compressHTML,
-			resolve: createResolve(loader, settings.config.root),
+			resolve: createResolve(loader, settings.config.root, settings.config.base),
 			routeCache: new RouteCache(logger, mode),
 			site: manifest.site,
 			ssr: isServerLikeOutput(settings.config),
